@@ -1,45 +1,42 @@
 language: c
-
 env:
-    - TRAVIS_PYTHON_VERSION="2.7"
-    - TRAVIS_PYTHON_VERSION="3.5"
-
+- TRAVIS_PYTHON_VERSION="2.7"
+- TRAVIS_PYTHON_VERSION="3.5"
 os:
-    - linux
-    - osx
-
+- linux
+- osx
 dist: trusty
-
 before_install:
-      # fastFM-core depends on cblas
-    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get update -qq; sudo apt-get install -y libatlas-base-dev; fi
-    - if [[ "$TRAVIS_PYTHON_VERSION" =~ "^2" ]]; then
-        if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-          wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
-        else
-          wget https://repo.continuum.io/miniconda/Miniconda-latest-MacOSX-x86_64.sh -O miniconda.sh;
-        fi
-      else
-        if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-          wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-        else
-          wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh;
-        fi
-      fi
-    - bash miniconda.sh -b -p $HOME/miniconda
-    - export PATH="$HOME/miniconda/bin:$PATH"
-    - hash -r
-    - conda config --set always_yes yes --set changeps1 no
-    - conda update -q conda
-    # Useful for debugging any issues with conda
-    - conda info -a
-    - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION cython numpy pandas scipy scikit-learn nose
-    - source activate test-environment
-
+- if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get update -qq; sudo apt-get install
+  -y libatlas-base-dev; fi
+- if [[ "$TRAVIS_PYTHON_VERSION" =~ "^2" ]]; then if [[ "$TRAVIS_OS_NAME" == "linux"
+  ]]; then wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
+  -O miniconda.sh; else wget https://repo.continuum.io/miniconda/Miniconda-latest-MacOSX-x86_64.sh
+  -O miniconda.sh; fi else if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+  -O miniconda.sh; else wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
+  -O miniconda.sh; fi fi
+- bash miniconda.sh -b -p $HOME/miniconda
+- export PATH="$HOME/miniconda/bin:$PATH"
+- hash -r
+- conda config --set always_yes yes --set changeps1 no
+- conda update -q conda
+- conda info -a
+- conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION cython numpy pandas
+  scipy scikit-learn nose
+- source activate test-environment
 install:
-    - git submodule update --init --recursive
-    - make
-    - pip install .
-
+- git submodule update --init --recursive
+- make
+- pip install .
 script:
-    - nosetests
+- nosetests
+
+deploy:
+  provider: releases
+  api_key:
+    secure: GYCLaOi6btMJ/ieq4z3GrGqUFEmN71B79C0B2/pK7qQZ7b1tabzjDyqThprLGVISKXt2wPzI+cumX3bs9mlD68vuOIWqO5NfLoKacNiYoLgbQouBeFoazk4VDyLyClBUG0WquvTu3BuAz4ocMxZykh+NRY+e6lNEuOlY4/z43tRdWMhj0TvRMzaJEy9P1pXIQUq2U09HZ43iAZbfY4yetndDM9x6b1vqomNei1h3ZC4PoF+WCD4I7cJ9zHMFh8ucf2Hs1236fj7j5HNeMEwTWZThRKWhaxmZBYA5DFqL83OfGnJHUcQjl/9Cp33Ky2OcO2BcB20sCDgZQqf1P/CutapyUtfo4C12ug2Z2orSHVEV8U6joVFOABBC+dnaw2tNmMu6AAoQBvujGYCAZMFb+fhSVMtWL2AHLqrelmqgQTLSsUzVhL8zl5RABvZPEKy4GEsm4TRc2d4iy3r/nWVdsZ7WF8Som/TrJy9+26SpUqpsbsdseFWPkwsDhcF0J7zmAzsXHMYGbjLGCZ9BXfKwR2E79KfMRFFzvG403qGrWD3vCNeCTiSUX/1qBcz3q9mK9BXekzsnBMfeT3ldUHUHVI2UqQCahdFDQwmPvtVJgINo28YsQCDCxFR5kR3NEB/Qx1YZmFdZ/P0fagO2oseAmTKj95JGC0SqT0/Zhvlta/E=
+  file: README.rst
+
+  skip_cleanup: true
+  on:
+    tags: true
