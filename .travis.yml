@@ -30,7 +30,6 @@ install:
 - pip install .
 - python setup.py bdist_wheel
 - ls
-- mv dist/fastFM-* dist/fastFM.tar.gz
 script:
 - nosetests
 
