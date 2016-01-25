@@ -28,7 +28,8 @@ install:
 - git submodule update --init --recursive
 - make
 - pip install .
-- python setup.py sdist
+- python setup.py bdist_wheel
+- ls
 - mv dist/fastFM-* dist/fastFM.tar.gz
 script:
 - nosetests
